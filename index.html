@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,100 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
     
+    <script>
+        (function() {
+            try {
+                const saved = localStorage.getItem('hw_map_tool_theme');
+                const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = saved === 'light' || saved === 'dark' ? saved : (systemDark ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (_) {}
+        })();
+    </script>
+
     <style>
+        :root {
+            --bg: linear-gradient(135deg, #667eea 0%, #764ba2 60%);
+            --fg: #fff;
+            --muted: rgba(255,255,255,.75);
+            --card-bg: rgba(255,255,255,.10);
+            --card-border: rgba(255,255,255,.20);
+            --panel-bg: rgba(255,255,255,.10);
+            --panel-fg: #fff;
+            --panel-elevated: rgba(255,255,255,.14);
+            --border: rgba(255,255,255,.22);
+            --accent: #bcd0ff;
+            --accent-strong: #dbe7ff;
+            --accent-contrast: #1b1e2f;
+            --secondary-bg: rgba(255,255,255,.80);
+            --secondary-fg: #333;
+            --secondary-hover: rgba(255,255,255,.92);
+            --field-bg: rgba(255,255,255,.10);
+            --field-border: rgba(255,255,255,.22);
+            --field-fg: #fff;
+            --surface-soft: rgba(255,255,255,.08);
+            --surface-strong: rgba(255,255,255,.12);
+            --selection-preview: #ffffff;
+            --selection-final: #ff6b35;
+            --selection-fill: #ffd93d;
+            --status-ready-bg: rgba(40,167,69,.16);
+            --status-ready-fg: #d4edda;
+            --status-working-bg: rgba(255,193,7,.16);
+            --status-working-fg: #fff3cd;
+            --status-error-bg: rgba(220,53,69,.18);
+            --status-error-fg: #f8d7da;
+            --status-success-bg: rgba(40,167,69,.16);
+            --status-success-fg: #d4edda;
+            --danger: #dc3545;
+            --danger-soft: rgba(220,53,69,.16);
+            --map-control-bg: rgba(255,255,255,.92);
+            --map-control-fg: #222;
+            --map-control-border: rgba(0,0,0,.25);
+            --guide-tooltip-bg: rgba(20,20,28,.92);
+            --guide-tooltip-fg: #fff;
+        }
+
+        html[data-theme="dark"] {
+            --bg: linear-gradient(135deg, #07070b 0%, #151520 100%);
+            --fg: #f2f2f7;
+            --muted: rgba(242,242,247,.72);
+            --card-bg: rgba(255,255,255,.04);
+            --card-border: rgba(255,255,255,.12);
+            --panel-bg: rgba(18,18,26,.92);
+            --panel-fg: #f2f2f7;
+            --panel-elevated: rgba(30,30,40,.92);
+            --border: rgba(255,255,255,.14);
+            --accent: #8ab4ff;
+            --accent-strong: #b9d0ff;
+            --accent-contrast: #0b1020;
+            --secondary-bg: rgba(30,30,40,.92);
+            --secondary-fg: #f2f2f7;
+            --secondary-hover: rgba(52,52,66,.96);
+            --field-bg: rgba(255,255,255,.06);
+            --field-border: rgba(255,255,255,.14);
+            --field-fg: #f2f2f7;
+            --surface-soft: rgba(255,255,255,.05);
+            --surface-strong: rgba(255,255,255,.09);
+            --selection-preview: #ffffff;
+            --selection-final: #ff6b35;
+            --selection-fill: #ffd93d;
+            --status-ready-bg: rgba(34,197,94,.16);
+            --status-ready-fg: #86efac;
+            --status-working-bg: rgba(245,158,11,.16);
+            --status-working-fg: #fcd34d;
+            --status-error-bg: rgba(239,68,68,.16);
+            --status-error-fg: #fca5a5;
+            --status-success-bg: rgba(34,197,94,.16);
+            --status-success-fg: #86efac;
+            --danger: #ff5a6a;
+            --danger-soft: rgba(255,90,106,.14);
+            --map-control-bg: rgba(18,18,26,.95);
+            --map-control-fg: #f2f2f7;
+            --map-control-border: rgba(255,255,255,.14);
+            --guide-tooltip-bg: rgba(18,18,26,.96);
+            --guide-tooltip-fg: #f2f2f7;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -18,9 +111,10 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: #1a1a2e;
-            color: #eee;
+            background: var(--bg);
+            color: var(--fg);
             min-height: 100vh;
+            line-height: 1.6;
         }
         
         .container {
@@ -33,19 +127,55 @@
         header {
             text-align: center;
             padding: 20px 0;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border);
             margin-bottom: 20px;
         }
         
         header h1 {
             font-size: 1.8em;
-            color: #4cc9f0;
+            color: var(--accent-strong);
             margin-bottom: 5px;
         }
         
         header p {
-            color: #888;
+            color: var(--muted);
             font-size: 0.9em;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        .header-copy {
+            flex: 1;
+            text-align: center;
+        }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 40px;
+            padding: .4rem .8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--secondary-bg);
+            color: var(--secondary-fg);
+            cursor: pointer;
+            transition: all .2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            font-size: 1.15rem;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,.15);
+            background: var(--secondary-hover);
         }
         
         .main-content {
@@ -68,21 +198,25 @@
         
         #map {
             height: 650px;
-            border-radius: 8px;
-            border: 2px solid #333;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
             flex-shrink: 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,.12);
         }
         
         .sidebar {
-            background: #16213e;
-            border-radius: 8px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
             padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,.1);
         }
         
         .sidebar h2 {
             font-size: 1.1em;
             margin-bottom: 15px;
-            color: #4cc9f0;
+            color: var(--accent-strong);
         }
         
         .form-group {
@@ -93,23 +227,23 @@
             display: block;
             margin-bottom: 5px;
             font-size: 0.85em;
-            color: #aaa;
+            color: var(--muted);
         }
         
         .form-group input[type="text"],
         .form-group input[type="number"] {
             width: 100%;
             padding: 10px;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background: #1a1a2e;
-            color: #eee;
+            border: 1px solid var(--field-border);
+            border-radius: 6px;
+            background: var(--field-bg);
+            color: var(--field-fg);
             font-size: 0.95em;
         }
         
         .form-group input:focus {
             outline: none;
-            border-color: #4cc9f0;
+            border-color: var(--accent);
         }
         
         .checkbox-group {
@@ -132,14 +266,15 @@
         
         .section-title {
             font-size: 0.8em;
-            color: #888;
+            color: var(--muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-top: 8px;
             margin-bottom: 4px;
             padding: 6px 8px;
-            background: #1a1a2e;
+            background: var(--surface-soft);
             border-radius: 4px;
+            border: 1px solid var(--border);
             cursor: pointer;
             display: flex;
             justify-content: space-between;
@@ -148,18 +283,18 @@
         }
         
         .section-title:hover {
-            background: #222;
+            background: var(--surface-strong);
         }
         
         .section-count {
-            color: #4cc9f0;
+            color: var(--accent);
             font-size: 0.9em;
             margin-left: auto;
             margin-right: 8px;
         }
         
         .feature-size {
-            color: #888;
+            color: var(--muted);
             font-size: 0.8em;
             margin-left: 4px;
         }
@@ -249,7 +384,7 @@
             display: block;
             margin-bottom: 5px;
             font-size: 0.85em;
-            color: #aaa;
+            color: var(--muted);
         }
         
         .slider-row {
@@ -263,7 +398,7 @@
             -webkit-appearance: none;
             appearance: none;
             height: 6px;
-            background: #555;
+            background: var(--surface-strong);
             border-radius: 3px;
             outline: none;
             margin: 8px 0;
@@ -273,7 +408,7 @@
             -webkit-appearance: none;
             width: 16px;
             height: 16px;
-            background: #4cc9f0;
+            background: var(--accent);
             border-radius: 50%;
             cursor: pointer;
             margin-top: -5px;
@@ -281,20 +416,20 @@
         
         input[type="range"]::-webkit-slider-runnable-track {
             height: 6px;
-            background: #555;
+            background: var(--surface-strong);
             border-radius: 3px;
         }
         
         input[type="range"]::-moz-range-track {
             height: 6px;
-            background: #555;
+            background: var(--surface-strong);
             border-radius: 3px;
         }
         
         input[type="range"]::-moz-range-thumb {
             width: 14px;
             height: 14px;
-            background: #4cc9f0;
+            background: var(--accent);
             border-radius: 50%;
             cursor: pointer;
             border: none;
@@ -308,7 +443,7 @@
             min-width: 60px;
             text-align: right;
             font-size: 0.85em;
-            color: #4cc9f0;
+            color: var(--accent);
         }
         
         .size-warning {
@@ -328,7 +463,7 @@
         
         .size-bar {
             height: 8px;
-            background: #333;
+            background: var(--surface-strong);
             border-radius: 4px;
             overflow: hidden;
             margin-top: 5px;
@@ -349,7 +484,8 @@
         }
         
         .stats {
-            background: #1a1a2e;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
             padding: 12px;
             border-radius: 4px;
             margin-bottom: 15px;
@@ -367,61 +503,61 @@
         }
         
         .stats-value {
-            color: #4cc9f0;
+            color: var(--accent);
             font-weight: bold;
         }
         
         .btn {
             width: 100%;
             padding: 12px;
-            border: none;
-            border-radius: 4px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
             font-size: 1em;
             cursor: pointer;
             transition: all 0.2s;
         }
         
         .btn-primary {
-            background: #4cc9f0;
-            color: #1a1a2e;
+            background: var(--accent);
+            color: var(--accent-contrast);
             font-weight: bold;
         }
         
         .btn-primary:hover {
-            background: #7dd8f5;
+            background: var(--accent-strong);
         }
         
         .btn-primary:disabled {
-            background: #333;
-            color: #666;
+            background: var(--surface-strong);
+            color: var(--muted);
             cursor: not-allowed;
         }
         
         .btn-secondary {
-            background: #333;
-            color: #eee;
+            background: var(--secondary-bg);
+            color: var(--secondary-fg);
             margin-bottom: 10px;
         }
         
         .btn-secondary:hover:not(:disabled) {
-            background: #444;
+            background: var(--secondary-hover);
         }
         
         .btn-secondary:disabled {
-            background: #222;
-            color: #555;
+            background: var(--surface-soft);
+            color: var(--muted);
             cursor: not-allowed;
         }
         
         .btn-clear {
-            background: #3a2020;
-            color: #f44336;
-            border: 1px solid #f44336;
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid var(--danger);
             margin-top: 10px;
         }
         
         .btn-clear:hover {
-            background: #4a2a2a;
+            background: rgba(220,53,69,.22);
         }
         
         .status {
@@ -433,49 +569,50 @@
         }
         
         .status.ready {
-            background: #1a3a1a;
-            color: #4caf50;
+            background: var(--status-ready-bg);
+            color: var(--status-ready-fg);
         }
         
         .status.working {
-            background: #3a3a1a;
-            color: #ff9800;
+            background: var(--status-working-bg);
+            color: var(--status-working-fg);
         }
         
         .status.error {
-            background: #3a1a1a;
-            color: #f44336;
+            background: var(--status-error-bg);
+            color: var(--status-error-fg);
         }
         
         .status.success {
-            background: #1a3a1a;
-            color: #4caf50;
+            background: var(--status-success-bg);
+            color: var(--status-success-fg);
         }
         
         .instructions {
             margin-top: 20px;
             padding: 15px;
-            background: #16213e;
-            border-radius: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
         }
         
         .instructions h3 {
             font-size: 1em;
             margin-bottom: 10px;
-            color: #4cc9f0;
+            color: var(--accent-strong);
         }
         
         .instructions ol {
             padding-left: 20px;
             font-size: 0.85em;
             line-height: 1.6;
-            color: #aaa;
+            color: var(--muted);
         }
         
         .progress-bar {
             width: 100%;
             height: 4px;
-            background: #333;
+            background: var(--surface-strong);
             border-radius: 2px;
             margin-top: 10px;
             overflow: hidden;
@@ -488,14 +625,16 @@
         
         .progress-bar-fill {
             height: 100%;
-            background: #4cc9f0;
+            background: var(--accent);
             width: 0%;
             transition: width 0.3s;
         }
         
         .preview-panel {
-            background: #16213e;
-            border-radius: 8px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
             padding: 12px;
             display: none;
         }
@@ -505,8 +644,10 @@
         }
         
         .instructions-banner {
-            background: #16213e;
-            border-radius: 8px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
             padding: 10px 12px;
             display: flex;
             align-items: flex-start;
@@ -518,7 +659,7 @@
         }
         
         .instructions-banner h3 {
-            color: #4cc9f0;
+            color: var(--accent-strong);
             font-size: 0.9em;
             margin: 0 0 6px 0;
         }
@@ -527,7 +668,7 @@
             margin: 0;
             padding-left: 18px;
             font-size: 0.8em;
-            color: #aaa;
+            color: var(--muted);
             line-height: 1.5;
         }
         
@@ -542,7 +683,7 @@
         .instructions-close {
             background: none;
             border: none;
-            color: #666;
+            color: var(--muted);
             font-size: 1.2em;
             cursor: pointer;
             padding: 0;
@@ -550,7 +691,7 @@
         }
         
         .instructions-close:hover {
-            color: #fff;
+            color: var(--fg);
         }
         
         .preview-header {
@@ -561,7 +702,7 @@
         }
         
         .preview-header h3 {
-            color: #4cc9f0;
+            color: var(--accent-strong);
             font-size: 1em;
             margin: 0;
         }
@@ -569,13 +710,13 @@
         .preview-close {
             background: none;
             border: none;
-            color: #888;
+            color: var(--muted);
             font-size: 1.2em;
             cursor: pointer;
         }
         
         .preview-close:hover {
-            color: #fff;
+            color: var(--fg);
         }
         
         .map-legend {
@@ -583,17 +724,19 @@
             flex-wrap: wrap;
             gap: 8px;
             padding: 6px 10px;
-            background: #16213e;
-            border-radius: 4px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
             font-size: 0.75em;
         }
         
         .preview-canvas-container {
             background: #000;
-            border-radius: 4px;
+            border-radius: 8px;
             overflow: hidden;
             position: relative;
             cursor: grab;
+            border: 1px solid var(--border);
         }
         
         .preview-canvas-container:active {
@@ -618,10 +761,10 @@
         .preview-control-btn {
             width: 32px;
             height: 32px;
-            background: rgba(22, 33, 62, 0.9);
-            border: 1px solid #4cc9f0;
+            background: var(--panel-elevated);
+            border: 1px solid var(--accent);
             border-radius: 4px;
-            color: #4cc9f0;
+            color: var(--accent);
             font-size: 1.2em;
             cursor: pointer;
             display: flex;
@@ -631,8 +774,8 @@
         }
         
         .preview-control-btn:hover {
-            background: #4cc9f0;
-            color: #0f1419;
+            background: var(--accent);
+            color: var(--accent-contrast);
         }
         
         .map-controls {
@@ -648,8 +791,9 @@
         .map-control-btn {
             width: 38px;
             height: 38px;
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid #333;
+            background: var(--map-control-bg);
+            color: var(--map-control-fg);
+            border: 1px solid var(--map-control-border);
             border-radius: 4px;
             cursor: pointer;
             display: flex;
@@ -661,8 +805,9 @@
         }
         
         .map-control-btn:hover {
-            background: #4cc9f0;
-            border-color: #4cc9f0;
+            background: var(--accent);
+            color: var(--accent-contrast);
+            border-color: var(--accent);
             transform: scale(1.05);
         }
         
@@ -671,8 +816,9 @@
         }
         
         .map-control-btn.active {
-            background: #4cc9f0;
-            border-color: #4cc9f0;
+            background: var(--accent);
+            color: var(--accent-contrast);
+            border-color: var(--accent);
         }
         
         .legend-item {
@@ -699,6 +845,66 @@
             align-items: center;
             justify-content: center;
         }
+
+        .leaflet-draw-toolbar a,
+        .leaflet-draw-actions a {
+            background-color: var(--map-control-bg) !important;
+            color: var(--map-control-fg) !important;
+            border-color: var(--map-control-border) !important;
+        }
+
+        .leaflet-draw-toolbar a:hover,
+        .leaflet-draw-actions a:hover,
+        .leaflet-draw-toolbar a.leaflet-draw-toolbar-button-enabled {
+            background-color: var(--accent) !important;
+            color: var(--accent-contrast) !important;
+        }
+
+        .leaflet-draw-guide-dash {
+            background-color: var(--selection-preview) !important;
+        }
+
+        .leaflet-draw-tooltip {
+            background: var(--guide-tooltip-bg) !important;
+            color: var(--guide-tooltip-fg) !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 6px 20px rgba(0,0,0,.25) !important;
+        }
+
+        .leaflet-draw-tooltip:before {
+            border-right-color: var(--guide-tooltip-bg) !important;
+        }
+
+        .leaflet-draw-tooltip-subtext {
+            color: var(--muted) !important;
+        }
+
+        #waypointsContent,
+        #allFeaturesContent,
+        .preview-layers,
+        .size-warning,
+        .actual-results,
+        .actual-result-card {
+            background: var(--panel-bg) !important;
+            color: var(--panel-fg) !important;
+            border-color: var(--border) !important;
+        }
+
+        #waypointsToolbar,
+        .preview-layers > div {
+            border-color: var(--border) !important;
+        }
+
+        @media (max-width: 900px) {
+            .header-top {
+                flex-direction: column;
+            }
+
+            .header-copy {
+                text-align: center;
+            }
+        }
+
         .leaflet-draw-draw-polygon::after {
             content: '';
             position: absolute;
@@ -715,8 +921,14 @@
 <body>
     <div class="container">
         <header>
-            <h1>HardwareOne Map Converter</h1>
-            <p>Create offline map files for your ESP32 device</p>
+            <div class="header-top">
+                <div></div>
+                <div class="header-copy">
+                    <h1>HardwareOne Map Converter</h1>
+                    <p>Create offline map files for your ESP32 device</p>
+                </div>
+                <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">☀️</button>
+            </div>
         </header>
         
         <div class="main-content">
@@ -756,12 +968,12 @@
                         <button class="preview-close" onclick="closePreview()">✕</button>
                     </div>
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px;">
-                        <div style="font-size:0.75em;color:#aaa;">
-                            <span style="color:#888;font-weight:bold;">Mode:</span>
+                        <div style="font-size:0.75em;color:var(--muted);">
+                            <span style="color:var(--muted);font-weight:bold;">Mode:</span>
                             <label style="margin-left:8px;cursor:pointer;"><input type="radio" name="previewMode" id="previewModeDevice" value="device" checked onchange="requestPreviewRender()"> Device</label>
                             <label style="margin-left:10px;cursor:pointer;"><input type="radio" name="previewMode" id="previewModeGranular" value="granular" onchange="requestPreviewRender()"> Granular</label>
                         </div>
-                        <div style="font-size:0.7em;color:#666;">Device = exact .hwmap render, Granular = OSM-tag separation</div>
+                        <div style="font-size:0.7em;color:var(--muted);">Device = exact .hwmap render, Granular = OSM-tag separation</div>
                     </div>
                     <div class="preview-canvas-container" id="previewContainer">
                         <canvas id="previewCanvas"></canvas>
@@ -771,37 +983,37 @@
                             <button class="preview-control-btn" onclick="resetPreviewZoom()" title="Reset view">⟲</button>
                         </div>
                     </div>
-                    <div class="preview-layers" style="padding:8px;background:#0d0d1a;border-radius:4px;margin-top:6px;font-size:0.7em;">
-                        <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #333;">
-                            <span style="color:#888;font-weight:bold;width:100%;margin-bottom:2px;">Roads:</span>
+                    <div class="preview-layers" style="padding:8px;background:var(--panel-bg);border:1px solid var(--border);border-radius:4px;margin-top:6px;font-size:0.7em;">
+                        <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+                            <span style="color:var(--muted);font-weight:bold;width:100%;margin-bottom:2px;">Roads:</span>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerMotorways" checked onchange="renderPreview()"><span style="color:#ff6b6b;">Motorways</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerTrunk" checked onchange="renderPreview()"><span style="color:#ff8787;">Trunk</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerPrimary" checked onchange="renderPreview()"><span style="color:#ffd93d;">Primary</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerSecondary" checked onchange="renderPreview()"><span style="color:#ffe066;">Secondary</span></label>
-                            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerTertiary" checked onchange="renderPreview()"><span style="color:#fff;">Tertiary</span></label>
-                            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerResidential" checked onchange="renderPreview()"><span style="color:#ddd;">Residential</span></label>
-                            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerService" checked onchange="renderPreview()"><span style="color:#bbb;">Service</span></label>
+                            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerTertiary" checked onchange="renderPreview()"><span style="color:var(--panel-fg);">Tertiary</span></label>
+                            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerResidential" checked onchange="renderPreview()"><span style="color:var(--muted);">Residential</span></label>
+                            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerService" checked onchange="renderPreview()"><span style="color:var(--muted);">Service</span></label>
                         </div>
-                        <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #333;">
-                            <span style="color:#888;font-weight:bold;width:100%;margin-bottom:2px;">Paths:</span>
-                            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerFootways" checked onchange="renderPreview()"><span style="color:#aaa;">Footways</span></label>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+                            <span style="color:var(--muted);font-weight:bold;width:100%;margin-bottom:2px;">Paths:</span>
+                            <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerFootways" checked onchange="renderPreview()"><span style="color:var(--muted);">Footways</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerCycleways" checked onchange="renderPreview()"><span style="color:#74c0fc;">Cycleways</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerTracks" checked onchange="renderPreview()"><span style="color:#a9e34b;">Trails</span></label>
                         </div>
-                        <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #333;">
-                            <span style="color:#888;font-weight:bold;width:100%;margin-bottom:2px;">Water:</span>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+                            <span style="color:var(--muted);font-weight:bold;width:100%;margin-bottom:2px;">Water:</span>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerLakes" checked onchange="renderPreview()"><span style="color:#4dabf7;">Lakes/Ponds</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerRivers" checked onchange="renderPreview()"><span style="color:#339af0;">Rivers</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerCoastlines" checked onchange="renderPreview()"><span style="color:#1c7ed6;">Coastlines</span></label>
                         </div>
-                        <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #333;">
-                            <span style="color:#888;font-weight:bold;width:100%;margin-bottom:2px;">Nature:</span>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+                            <span style="color:var(--muted);font-weight:bold;width:100%;margin-bottom:2px;">Nature:</span>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerParks" checked onchange="renderPreview()"><span style="color:#69db7c;">Parks</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerForests" checked onchange="renderPreview()"><span style="color:#2f9e44;">Forests</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerGrassland" checked onchange="renderPreview()"><span style="color:#8fbc8f;">Grassland</span></label>
                         </div>
                         <div style="display:flex;flex-wrap:wrap;gap:4px 10px;">
-                            <span style="color:#888;font-weight:bold;width:100%;margin-bottom:2px;">Infrastructure:</span>
+                            <span style="color:var(--muted);font-weight:bold;width:100%;margin-bottom:2px;">Infrastructure:</span>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerRailway" checked onchange="renderPreview()"><span style="color:#da77f2;">Railways</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerSubways" checked onchange="renderPreview()"><span style="color:#be4bdb;">Subways</span></label>
                             <label style="display:flex;align-items:center;gap:3px;cursor:pointer;"><input type="checkbox" id="layerBus" checked onchange="renderPreview()"><span style="color:#fab005;">Bus</span></label>
@@ -829,11 +1041,11 @@
                 </div>
                 
                 <!-- Waypoints Section - Near top for easy access -->
-                <div class="section-title" onclick="toggleSection(this)" data-section="waypoints" style="background:#2a2a4e;margin-bottom:0;">
+                <div class="section-title" onclick="toggleSection(this)" data-section="waypoints" style="background:var(--panel-elevated);margin-bottom:0;">
                     Waypoints <span class="section-count" id="countWaypoints">(0)</span>
                 </div>
-                <div class="section-content" id="waypointsContent" style="display:block !important;padding:8px;background:#1a1a2e;border-radius:0 0 4px 4px;margin-bottom:12px;">
-                    <div id="waypointsToolbar" style="padding:6px 0 10px 0;margin-bottom:10px;border-bottom:1px solid #333;">
+                <div class="section-content" id="waypointsContent" style="display:block !important;padding:8px;background:var(--panel-bg);border-radius:0 0 4px 4px;margin-bottom:12px;">
+                    <div id="waypointsToolbar" style="padding:6px 0 10px 0;margin-bottom:10px;border-bottom:1px solid var(--border);">
                         <button class="btn btn-secondary" onclick="exportWaypoints()" style="padding:6px 14px;font-size:0.75em;">Export</button>
                         <button class="btn btn-secondary" onclick="importWaypoints()" style="padding:6px 14px;font-size:0.75em;">Import</button>
                         <button class="btn btn-secondary" onclick="clearAllWaypoints()" style="padding:6px 14px;font-size:0.75em;">Clear</button>
@@ -842,10 +1054,10 @@
                 </div>
 
                 <!-- Features Section - All feature categories nested inside -->
-                <div class="section-title" onclick="toggleSection(this)" data-section="allfeatures" style="background:#2a2a4e;margin-bottom:0;">
+                <div class="section-title" onclick="toggleSection(this)" data-section="allfeatures" style="background:var(--panel-elevated);margin-bottom:0;">
                     Features <span class="section-count" id="countAllFeatures"></span>
                 </div>
-                <div class="section-content" id="allFeaturesContent" style="padding:4px 8px;background:#1a1a2e;border-radius:0 0 4px 4px;margin-bottom:12px;">
+                <div class="section-content" id="allFeaturesContent" style="padding:4px 8px;background:var(--panel-bg);border-radius:0 0 4px 4px;margin-bottom:12px;">
                     <div class="section-title" onclick="toggleSection(this)" data-section="highways" style="font-size:0.9em;">Highways <span class="section-count" id="countHighways">(2/2)</span></div>
                     <div class="section-content">
                         <label class="checkbox-item">
@@ -946,12 +1158,12 @@
                             <input type="checkbox" id="subways" onchange="updateSectionCounts()">
                             Subways <span class="feature-size" id="size-subways"></span>
                         </label>
-                        <div id="subwayRoutesList" style="display:none;grid-column:span 2;font-size:0.75em;max-height:120px;overflow-y:auto;background:#0d0d1a;border-radius:4px;padding:6px;margin:4px 0;"></div>
+                        <div id="subwayRoutesList" style="display:none;grid-column:span 2;font-size:0.75em;max-height:120px;overflow-y:auto;background:var(--panel-bg);border:1px solid var(--border);border-radius:4px;padding:6px;margin:4px 0;"></div>
                         <label class="checkbox-item">
                             <input type="checkbox" id="busRoutes" onchange="updateSectionCounts()">
                             Bus Routes <span class="feature-size" id="size-busRoutes"></span>
                         </label>
-                        <div id="busRoutesList" style="display:none;grid-column:span 2;font-size:0.75em;max-height:120px;overflow-y:auto;background:#0d0d1a;border-radius:4px;padding:6px;margin:4px 0;"></div>
+                        <div id="busRoutesList" style="display:none;grid-column:span 2;font-size:0.75em;max-height:120px;overflow-y:auto;background:var(--panel-bg);border:1px solid var(--border);border-radius:4px;padding:6px;margin:4px 0;"></div>
                         <label class="checkbox-item">
                             <input type="checkbox" id="ferryRoutes" onchange="updateSectionCounts()">
                             Ferry Routes <span class="feature-size" id="size-ferryRoutes"></span>
@@ -1012,58 +1224,58 @@
                 </div>
                 
                 <!-- Post-Processing Section -->
-                <div class="section-title" onclick="toggleSection(this)" data-section="postprocessing" style="background:#2a2a4e;margin-bottom:0;">
+                <div class="section-title" onclick="toggleSection(this)" data-section="postprocessing" style="background:var(--panel-elevated);margin-bottom:0;">
                     Output Settings
                 </div>
-                <div class="section-content" id="outputSettingsContent" style="display:block;padding:10px 12px;background:#1a1a2e;border-radius:0 0 4px 4px;margin-bottom:12px;">
+                <div class="section-content" id="outputSettingsContent" style="display:block;padding:10px 12px;background:var(--panel-bg);border-radius:0 0 4px 4px;margin-bottom:12px;">
                     <div class="slider-group" style="margin-bottom:8px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                            <label style="font-size:0.85em;color:#aaa;">Name Detail</label>
-                            <span class="slider-value" id="nameDetailValue" style="font-size:0.85em;color:#4cc9f0;">Everything</span>
+                            <label style="font-size:0.85em;color:var(--muted);">Name Detail</label>
+                            <span class="slider-value" id="nameDetailValue" style="font-size:0.85em;color:var(--accent);">Everything</span>
                         </div>
                         <input type="range" id="nameDetail" min="0" max="4" value="4" style="width:100%;">
-                        <div style="font-size:0.7em;color:#666;margin-top:4px;" id="nameDetailDesc">
+                        <div style="font-size:0.7em;color:var(--muted);margin-top:4px;" id="nameDetailDesc">
                             Highways + major roads get names for "where am I" context
                         </div>
                     </div>
                     
-                    <div style="margin:16px 0 12px 0;padding-top:12px;border-top:1px solid #333;">
-                        <div style="font-size:0.85em;color:#aaa;margin-bottom:8px;font-weight:bold;">HWMAP v5 Format</div>
-                        <div style="font-size:0.7em;color:#666;margin-bottom:12px;">Tiled encoding for efficient streaming (default format)</div>
+                    <div style="margin:16px 0 12px 0;padding-top:12px;border-top:1px solid var(--border);">
+                        <div style="font-size:0.85em;color:var(--muted);margin-bottom:8px;font-weight:bold;">HWMAP v5 Format</div>
+                        <div style="font-size:0.7em;color:var(--muted);margin-bottom:12px;">Tiled encoding for efficient streaming (default format)</div>
                         
                         <div class="slider-group" style="margin-bottom:12px;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                                <label style="font-size:0.85em;color:#aaa;">Tile Grid</label>
-                                <span class="slider-value" id="v5TileGridValue" style="font-size:0.85em;color:#4cc9f0;">32×32</span>
+                                <label style="font-size:0.85em;color:var(--muted);">Tile Grid</label>
+                                <span class="slider-value" id="v5TileGridValue" style="font-size:0.85em;color:var(--accent);">32×32</span>
                             </div>
-                            <select id="v5TileGrid" style="width:100%;padding:6px;border-radius:4px;background:#0d0d1a;color:#fff;border:1px solid #333;">
+                            <select id="v5TileGrid" style="width:100%;padding:6px;border-radius:4px;background:var(--field-bg);color:var(--field-fg);border:1px solid var(--field-border);">
                                 <option value="16">16×16 (256 tiles)</option>
                                 <option value="32" selected>32×32 (1024 tiles)</option>
                                 <option value="64">64×64 (4096 tiles)</option>
                             </select>
-                            <div style="font-size:0.7em;color:#666;margin-top:4px;">
+                            <div style="font-size:0.7em;color:var(--muted);margin-top:4px;">
                                 Smaller tiles = less geometry per tile, more overhead
                             </div>
                         </div>
                         
                         <div class="slider-group" style="margin-bottom:12px;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                                <label style="font-size:0.85em;color:#aaa;">Tile Halo</label>
-                                <span class="slider-value" id="v5HaloValue" style="font-size:0.85em;color:#4cc9f0;">10%</span>
+                                <label style="font-size:0.85em;color:var(--muted);">Tile Halo</label>
+                                <span class="slider-value" id="v5HaloValue" style="font-size:0.85em;color:var(--accent);">10%</span>
                             </div>
                             <input type="range" id="v5HaloPct" min="0" max="20" step="1" value="10" style="width:100%;">
-                            <div style="font-size:0.7em;color:#666;margin-top:4px;">
+                            <div style="font-size:0.7em;color:var(--muted);margin-top:4px;">
                                 Overlap between tiles to prevent seams (0-20%)
                             </div>
                         </div>
                         
                         <div class="slider-group" style="margin-bottom:12px;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                                <label style="font-size:0.85em;color:#aaa;">Quantization</label>
-                                <span class="slider-value" id="v5QuantValue" style="font-size:0.85em;color:#4cc9f0;">16-bit</span>
+                                <label style="font-size:0.85em;color:var(--muted);">Quantization</label>
+                                <span class="slider-value" id="v5QuantValue" style="font-size:0.85em;color:var(--accent);">16-bit</span>
                             </div>
                             <input type="range" id="v5QuantBits" min="10" max="16" step="1" value="16" style="width:100%;">
-                            <div style="font-size:0.7em;color:#666;margin-top:4px;">
+                            <div style="font-size:0.7em;color:var(--muted);margin-top:4px;">
                                 Lower = blockier shapes (10-bit = 1024 steps, 16-bit = 65536)
                             </div>
                         </div>
@@ -1074,12 +1286,12 @@
                         </label>
                     </div>
                     
-                    <div style="margin:16px 0 12px 0;padding-top:12px;border-top:1px solid #333;">
-                        <div style="font-size:0.85em;color:#aaa;margin-bottom:8px;font-weight:bold;">Geometry Simplification</div>
-                        <div style="font-size:0.7em;color:#666;margin-bottom:8px;">Reduce file size by simplifying complex shapes. Each slider controls max points per feature.</div>
+                    <div style="margin:16px 0 12px 0;padding-top:12px;border-top:1px solid var(--border);">
+                        <div style="font-size:0.85em;color:var(--muted);margin-bottom:8px;font-weight:bold;">Geometry Simplification</div>
+                        <div style="font-size:0.7em;color:var(--muted);margin-bottom:8px;">Reduce file size by simplifying complex shapes. Each slider controls max points per feature.</div>
                         
                         <!-- Highways -->
-                        <div style="font-size:0.75em;color:#888;margin:10px 0 4px 0;font-weight:bold;">Highways</div>
+                        <div style="font-size:0.75em;color:var(--muted);margin:10px 0 4px 0;font-weight:bold;">Highways</div>
                         <label class="checkbox-item" id="simplifyMotorwaysLabel" style="font-size:0.85em;display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;opacity:0.4;">
                             <div style="display:flex;align-items:center;gap:6px;">
                                 <input type="checkbox" id="simplifyMotorways" onchange="updateStats(); updateSimplifySliders();" disabled>
@@ -1089,8 +1301,8 @@
                         </label>
                         <div id="motorwaysSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="motorwaysSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="motorwaysSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="motorwaysSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('motorways')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1103,14 +1315,14 @@
                         </label>
                         <div id="trunkSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="trunkSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="trunkSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="trunkSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('trunk')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
                         
                         <!-- Roads -->
-                        <div style="font-size:0.75em;color:#888;margin:10px 0 4px 0;font-weight:bold;">Roads</div>
+                        <div style="font-size:0.75em;color:var(--muted);margin:10px 0 4px 0;font-weight:bold;">Roads</div>
                         <label class="checkbox-item" id="simplifyPrimaryLabel" style="font-size:0.85em;display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;opacity:0.4;">
                             <div style="display:flex;align-items:center;gap:6px;">
                                 <input type="checkbox" id="simplifyPrimary" onchange="updateStats(); updateSimplifySliders();" disabled>
@@ -1120,8 +1332,8 @@
                         </label>
                         <div id="primarySimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="primarySimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="primarySimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="primarySimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('primary')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1134,8 +1346,8 @@
                         </label>
                         <div id="secondarySimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="secondarySimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="secondarySimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="secondarySimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('secondary')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1148,8 +1360,8 @@
                         </label>
                         <div id="tertiarySimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="tertiarySimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="tertiarySimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="tertiarySimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('tertiary')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1162,8 +1374,8 @@
                         </label>
                         <div id="residentialSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="residentialSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="residentialSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="residentialSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('residential')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1176,14 +1388,14 @@
                         </label>
                         <div id="serviceSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="serviceSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="serviceSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="serviceSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('service')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
                         
                         <!-- Paths & Transit -->
-                        <div style="font-size:0.75em;color:#888;margin:10px 0 4px 0;font-weight:bold;">Paths & Transit</div>
+                        <div style="font-size:0.75em;color:var(--muted);margin:10px 0 4px 0;font-weight:bold;">Paths & Transit</div>
                         <label class="checkbox-item" id="simplifyPathsLabel" style="font-size:0.85em;display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;opacity:0.4;">
                             <div style="display:flex;align-items:center;gap:6px;">
                                 <input type="checkbox" id="simplifyPaths" onchange="updateStats(); updateSimplifySliders();" disabled>
@@ -1193,15 +1405,15 @@
                         </label>
                         <div id="pathsSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="pathsSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">10 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="pathsSimplifyValue" style="font-size:0.7em;color:var(--accent);">10 pts</span>
                             </div>
                             <input type="range" id="pathsSimplifyPoints" min="10" max="30" step="1" value="10" style="width:100%;" disabled oninput="updateRoadSimplifyValue('paths')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
                         <div id="pathLengthSliderContainer" style="padding-left:20px;margin-bottom:4px;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Min length</label>
-                                <span id="pathLengthValue" style="font-size:0.7em;color:#4cc9f0;">0m (all)</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Min length</label>
+                                <span id="pathLengthValue" style="font-size:0.7em;color:var(--accent);">0m (all)</span>
                             </div>
                             <input type="range" id="pathMinLength" min="0" max="500" step="25" value="0" style="width:100%;" oninput="updatePathLengthValue(); updateStats();" onchange="updatePathLengthValue(); updateStats(); triggerAutoPreview();">
                         </div>
@@ -1214,8 +1426,8 @@
                         </label>
                         <div id="busSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="busSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="busSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="busSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('bus')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1228,8 +1440,8 @@
                         </label>
                         <div id="railSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="railSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="railSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="railSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('rail')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1242,14 +1454,14 @@
                         </label>
                         <div id="ferrySimplifyContainer" style="padding-left:20px;margin-bottom:6px;opacity:0.4;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.75em;color:#888;">Max points</label>
-                                <span id="ferrySimplifyValue" style="font-size:0.75em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.75em;color:var(--muted);">Max points</label>
+                                <span id="ferrySimplifyValue" style="font-size:0.75em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="ferrySimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateTransitSimplifyValue('ferry')" onchange="updateStats()">
                         </div>
                         
                         <!-- Infrastructure -->
-                        <div style="font-size:0.75em;color:#888;margin:10px 0 4px 0;font-weight:bold;">Infrastructure</div>
+                        <div style="font-size:0.75em;color:var(--muted);margin:10px 0 4px 0;font-weight:bold;">Infrastructure</div>
                         <label class="checkbox-item" id="simplifyStationsLabel" style="font-size:0.85em;display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;opacity:0.4;">
                             <div style="display:flex;align-items:center;gap:6px;">
                                 <input type="checkbox" id="simplifyStations" onchange="updateStats(); updateSimplifySliders();" disabled>
@@ -1259,8 +1471,8 @@
                         </label>
                         <div id="stationsSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="stationsSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="stationsSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="stationsSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('stations')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1273,8 +1485,8 @@
                         </label>
                         <div id="bridgesSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="bridgesSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="bridgesSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="bridgesSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('bridges')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1287,8 +1499,8 @@
                         </label>
                         <div id="industrialSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="industrialSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="industrialSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="industrialSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('industrial')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1301,8 +1513,8 @@
                         </label>
                         <div id="commercialSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="commercialSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="commercialSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="commercialSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('commercial')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1315,8 +1527,8 @@
                         </label>
                         <div id="residentialAreaSimplifyContainer" style="padding-left:20px;margin-bottom:4px;opacity:0.4;display:none;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                                <label style="font-size:0.7em;color:#888;">Max points</label>
-                                <span id="residentialAreaSimplifyValue" style="font-size:0.7em;color:#4cc9f0;">12 pts</span>
+                                <label style="font-size:0.7em;color:var(--muted);">Max points</label>
+                                <span id="residentialAreaSimplifyValue" style="font-size:0.7em;color:var(--accent);">12 pts</span>
                             </div>
                             <input type="range" id="residentialAreaSimplifyPoints" min="12" max="30" step="1" value="12" style="width:100%;" disabled oninput="updateRoadSimplifyValue('residentialArea')" onchange="updateStats(); triggerAutoPreview();">
                         </div>
@@ -1324,8 +1536,8 @@
                     
                     <div class="slider-group" style="margin-bottom:12px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                            <label style="font-size:0.85em;color:#aaa;">Target Size Budget</label>
-                            <span class="slider-value" id="budgetValue" style="font-size:0.85em;color:#4cc9f0;">1.5 MB</span>
+                            <label style="font-size:0.85em;color:var(--muted);">Target Size Budget</label>
+                            <span class="slider-value" id="budgetValue" style="font-size:0.85em;color:var(--accent);">1.5 MB</span>
                         </div>
                         <input type="range" id="sizeBudget" min="50" max="25000" step="50" value="1500" style="width:100%;">
                         <div class="size-bar" style="margin-top:6px;">
@@ -1358,44 +1570,44 @@
                     </div>
                 </div>
                 
-                <div id="sizeBreakdown" class="size-breakdown" style="display:none;margin-top:10px;padding:8px;background:#1a1a2e;border-radius:4px;font-size:0.8em;">
-                    <div style="color:#888;margin-bottom:4px;">Size breakdown (est.):</div>
+                <div id="sizeBreakdown" class="size-breakdown" style="display:none;margin-top:10px;padding:8px;background:var(--panel-bg);border:1px solid var(--border);border-radius:4px;font-size:0.8em;">
+                    <div style="color:var(--muted);margin-bottom:4px;">Size breakdown (est.):</div>
                     <div id="breakdownContent"></div>
                 </div>
                 
-                <div id="mapFeaturesPanel" style="display:none;margin-top:10px;margin-bottom:12px;padding:10px;background:#1a1a2e;border-radius:4px;">
+                <div id="mapFeaturesPanel" style="display:none;margin-top:10px;margin-bottom:12px;padding:10px;background:var(--panel-bg);border:1px solid var(--border);border-radius:4px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                        <span style="color:#4cc9f0;font-size:0.9em;font-weight:bold;">Names Found</span>
-                        <span id="metadataSizeEst" style="font-size:0.75em;color:#888;"></span>
+                        <span style="color:var(--accent);font-size:0.9em;font-weight:bold;">Names Found</span>
+                        <span id="metadataSizeEst" style="font-size:0.75em;color:var(--muted);"></span>
                     </div>
                     <div id="mapFeaturesList" style="font-size:0.8em;max-height:200px;overflow-y:auto;"></div>
-                    <div id="nameSummary" style="margin-top:8px;padding-top:8px;border-top:1px solid #333;font-size:0.75em;color:#888;"></div>
+                    <div id="nameSummary" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:0.75em;color:var(--muted);"></div>
                     <div id="buildingNameSummary" style="margin-top:4px;font-size:0.75em;color:#b197fc;"></div>
                 </div>
                 
-                <div id="actualResults" class="size-breakdown" style="display:none;margin-top:10px;padding:8px;background:#1a2e1a;border:1px solid #69db7c;border-radius:4px;font-size:0.8em;">
+                <div id="actualResults" class="size-breakdown" style="display:none;margin-top:10px;padding:8px;background:var(--status-success-bg);border:1px solid #69db7c;border-radius:4px;font-size:0.8em;">
                     <div style="color:#69db7c;margin-bottom:8px;font-weight:bold;display:flex;align-items:center;gap:4px;">
                         <span>✓</span>
                         <span>Generated Map File</span>
                     </div>
-                    <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 8px;color:#ddd;">
-                        <span style="color:#888;">File Size:</span>
+                    <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 8px;color:var(--panel-fg);">
+                        <span style="color:var(--muted);">File Size:</span>
                         <span id="actualFileSize" style="color:#69db7c;font-weight:bold;">--</span>
                         
-                        <span style="color:#888;">Features:</span>
+                        <span style="color:var(--muted);">Features:</span>
                         <span id="actualFeatureCount">--</span>
                         
-                        <span style="color:#888;">Named Features:</span>
+                        <span style="color:var(--muted);">Named Features:</span>
                         <span id="actualNamedCount">--</span>
                         
-                        <span style="color:#888;">Unique Names:</span>
+                        <span style="color:var(--muted);">Unique Names:</span>
                         <span id="actualNameCount">--</span>
                         
-                        <span style="color:#888;">Total Points:</span>
+                        <span style="color:var(--muted);">Total Points:</span>
                         <span id="actualPointCount">--</span>
                     </div>
-                    <div style="margin-top:8px;padding-top:8px;border-top:1px solid #2a5a2a;">
-                        <div style="color:#888;margin-bottom:4px;font-size:0.9em;">Size by Type:</div>
+                    <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(105,219,124,.35);">
+                        <div style="color:var(--muted);margin-bottom:4px;font-size:0.9em;">Size by Type:</div>
                         <div id="actualBreakdown"></div>
                     </div>
                 </div>
@@ -1495,6 +1707,22 @@
         // =============================================================================
         
         const map = L.map('map').setView([40.7128, -74.0060], 13);
+        const selectionPreviewStyle = {
+            color: '#ffffff',
+            weight: 4,
+            opacity: 1,
+            fillOpacity: 0.08,
+            fillColor: '#ffffff',
+            dashArray: '10, 5'
+        };
+        const selectionFinalStyle = {
+            color: '#ff6b35',
+            weight: 5,
+            opacity: 1,
+            fillOpacity: 0.25,
+            fillColor: '#ffd93d',
+            dashArray: '10, 5'
+        };
         
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
@@ -1509,34 +1737,16 @@
         const drawControl = new L.Control.Draw({
             draw: {
                 rectangle: {
-                    shapeOptions: {
-                        color: '#ff6b35',
-                        weight: 5,
-                        fillOpacity: 0.25,
-                        fillColor: '#ffd93d',
-                        dashArray: '10, 5'
-                    }
+                    shapeOptions: selectionPreviewStyle
                 },
                 polygon: {
                     allowIntersection: false,
-                    shapeOptions: {
-                        color: '#ff6b35',
-                        weight: 5,
-                        fillOpacity: 0.25,
-                        fillColor: '#ffd93d',
-                        dashArray: '10, 5'
-                    },
+                    shapeOptions: selectionPreviewStyle,
                     showArea: true,
                     metric: true
                 },
                 circle: {
-                    shapeOptions: {
-                        color: '#ff6b35',
-                        weight: 5,
-                        fillOpacity: 0.25,
-                        fillColor: '#ffd93d',
-                        dashArray: '10, 5'
-                    },
+                    shapeOptions: selectionPreviewStyle,
                     showRadius: true,
                     metric: true
                 },
@@ -1566,6 +1776,27 @@
         // Current selection - can be bounds (rect) or polygon
         let selectedBounds = null;
         let selectedPolygon = null;
+
+        function updateThemeToggleIcon() {
+            const btn = document.getElementById('themeToggleBtn');
+            if (!btn) return;
+            const theme = document.documentElement.getAttribute('data-theme') || 'light';
+            btn.textContent = theme === 'dark' ? '🌙' : '☀️';
+        }
+
+        function applyTheme(theme) {
+            const nextTheme = theme === 'dark' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            try {
+                localStorage.setItem('hw_map_tool_theme', nextTheme);
+            } catch (_) {}
+            updateThemeToggleIcon();
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+        }
 
         let previewRunId = 0;
         let generateRunId = 0;
@@ -1697,13 +1928,15 @@
             const btn = document.getElementById('waypointModeBtn');
             if (waypointAddMode) {
                 map.getContainer().style.cursor = 'crosshair';
-                btn.style.background = '#4cc9f0';
-                btn.style.borderColor = '#4cc9f0';
+                btn.style.background = 'var(--accent)';
+                btn.style.borderColor = 'var(--accent)';
+                btn.style.color = 'var(--accent-contrast)';
                 setStatus('ready', 'Click on the map to add a waypoint');
             } else {
                 map.getContainer().style.cursor = '';
-                btn.style.background = '#fff';
-                btn.style.borderColor = 'rgba(0,0,0,0.2)';
+                btn.style.background = 'var(--map-control-bg)';
+                btn.style.borderColor = 'var(--map-control-border)';
+                btn.style.color = 'var(--map-control-fg)';
                 setStatus('ready', 'Draw a shape on the map to select area');
             }
         }
@@ -1995,9 +2228,9 @@
                     })
                 }).addTo(map);
                 
-                const notesHtml = wp.notes ? `<div style="margin-top:4px;padding:4px;background:#1a1a2e;border-radius:3px;font-size:0.85em;color:#aaa;max-width:200px;word-wrap:break-word;white-space:pre-wrap;">${safeNotes}</div>` : '';
+                const notesHtml = wp.notes ? `<div style="margin-top:4px;padding:4px;background:var(--panel-bg);border:1px solid var(--border);border-radius:3px;font-size:0.85em;color:var(--muted);max-width:200px;word-wrap:break-word;white-space:pre-wrap;">${safeNotes}</div>` : '';
                 const filesCount = (wp.files || []).length;
-                const filesHtml = filesCount > 0 ? `<div style="margin-top:4px;font-size:0.8em;color:#666;">📎 ${filesCount} file${filesCount > 1 ? 's' : ''} attached</div>` : '';
+                const filesHtml = filesCount > 0 ? `<div style="margin-top:4px;font-size:0.8em;color:var(--muted);">📎 ${filesCount} file${filesCount > 1 ? 's' : ''} attached</div>` : '';
                 marker.bindPopup(`
                     <div style="font-family:system-ui,sans-serif;">
                         <strong>${safeName}</strong><br>
@@ -2025,7 +2258,7 @@
             countEl.textContent = `(${waypoints.length})`;
             
             if (waypoints.length === 0) {
-                listEl.innerHTML = '<p style="color:#666;font-size:0.85em;text-align:center;padding:10px 0;">No waypoints yet</p>';
+                listEl.innerHTML = '<p style="color:var(--muted);font-size:0.85em;text-align:center;padding:10px 0;">No waypoints yet</p>';
                 return;
             }
             
@@ -2036,30 +2269,30 @@
                 const badges = [];
                 if (wp.notes) badges.push('📝');
                 if (filesCount > 0) badges.push(`📎${filesCount}`);
-                const badgeHtml = badges.length > 0 ? `<span style="color:#666;font-size:0.8em;margin-left:6px;">${badges.join(' ')}</span>` : '';
+                const badgeHtml = badges.length > 0 ? `<span style="color:var(--muted);font-size:0.8em;margin-left:6px;">${badges.join(' ')}</span>` : '';
                 
                 html += `
-                    <div id="waypoint-card-${wp.id}" style="background:#16213e;border-radius:4px;margin-bottom:4px;overflow:hidden;">
+                    <div id="waypoint-card-${wp.id}" style="background:var(--panel-bg);border:1px solid var(--border);border-radius:4px;margin-bottom:4px;overflow:hidden;">
                         <div style="display:flex;align-items:center;padding:8px 10px;cursor:pointer;" onclick="toggleWaypointExpand(${wp.id})">
-                            <span style="color:#4cc9f0;margin-right:8px;">📍</span>
-                            <span style="flex:1;color:#eee;font-size:0.85em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${safeName}</span>
+                            <span style="color:var(--accent);margin-right:8px;">📍</span>
+                            <span style="flex:1;color:var(--panel-fg);font-size:0.85em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${safeName}</span>
                             ${badgeHtml}
-                            <span id="waypoint-arrow-${wp.id}" style="color:#666;font-size:0.7em;margin-left:8px;">▶</span>
+                            <span id="waypoint-arrow-${wp.id}" style="color:var(--muted);font-size:0.7em;margin-left:8px;">▶</span>
                         </div>
-                        <div id="waypoint-actions-${wp.id}" style="display:none;padding:0 10px 10px 10px;border-top:1px solid #333;">
+                        <div id="waypoint-actions-${wp.id}" style="display:none;padding:0 10px 10px 10px;border-top:1px solid var(--border);">
                             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
-                                <button onclick="event.stopPropagation();showWaypointOnMap(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:#2a2a4e;color:#ccc;border:none;border-radius:3px;cursor:pointer;">Show on Map</button>
-                                <button onclick="event.stopPropagation();editWaypoint(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:#2a2a4e;color:#ccc;border:none;border-radius:3px;cursor:pointer;">Rename</button>
-                                <button onclick="event.stopPropagation();editWaypointNotes(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:#2a2a4e;color:#ccc;border:none;border-radius:3px;cursor:pointer;">Notes</button>
-                                <button onclick="event.stopPropagation();editWaypointFiles(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:#2a2a4e;color:#ccc;border:none;border-radius:3px;cursor:pointer;">Files</button>
-                                <button onclick="event.stopPropagation();if(confirm('Delete this waypoint?'))deleteWaypoint(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:#2a2a4e;color:#ccc;border:none;border-radius:3px;cursor:pointer;">Delete</button>
+                                <button onclick="event.stopPropagation();showWaypointOnMap(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:var(--secondary-bg);color:var(--secondary-fg);border:1px solid var(--border);border-radius:3px;cursor:pointer;">Show on Map</button>
+                                <button onclick="event.stopPropagation();editWaypoint(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:var(--secondary-bg);color:var(--secondary-fg);border:1px solid var(--border);border-radius:3px;cursor:pointer;">Rename</button>
+                                <button onclick="event.stopPropagation();editWaypointNotes(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:var(--secondary-bg);color:var(--secondary-fg);border:1px solid var(--border);border-radius:3px;cursor:pointer;">Notes</button>
+                                <button onclick="event.stopPropagation();editWaypointFiles(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:var(--secondary-bg);color:var(--secondary-fg);border:1px solid var(--border);border-radius:3px;cursor:pointer;">Files</button>
+                                <button onclick="event.stopPropagation();if(confirm('Delete this waypoint?'))deleteWaypoint(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger);border-radius:3px;cursor:pointer;">Delete</button>
                             </div>
-                            <div id="waypoint-inline-editor-${wp.id}" style="display:none;margin-top:10px;padding:8px;background:#1a1a2e;border:1px solid #333;border-radius:4px;">
-                                <div id="waypoint-inline-editor-title-${wp.id}" style="color:#aaa;font-size:0.75em;margin-bottom:6px;"></div>
-                                <textarea id="waypoint-inline-editor-textarea-${wp.id}" style="width:100%;min-height:70px;max-height:180px;background:#16213e;border:1px solid #333;border-radius:4px;color:#eee;padding:8px;font-family:inherit;font-size:0.85em;resize:vertical;"></textarea>
+                            <div id="waypoint-inline-editor-${wp.id}" style="display:none;margin-top:10px;padding:8px;background:var(--panel-elevated);border:1px solid var(--border);border-radius:4px;">
+                                <div id="waypoint-inline-editor-title-${wp.id}" style="color:var(--muted);font-size:0.75em;margin-bottom:6px;"></div>
+                                <textarea id="waypoint-inline-editor-textarea-${wp.id}" style="width:100%;min-height:70px;max-height:180px;background:var(--field-bg);border:1px solid var(--field-border);border-radius:4px;color:var(--field-fg);padding:8px;font-family:inherit;font-size:0.85em;resize:vertical;"></textarea>
                                 <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
-                                    <button onclick="event.stopPropagation();cancelWaypointInlineEditor(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:#2a2a4e;color:#ccc;border:none;border-radius:3px;cursor:pointer;">Cancel</button>
-                                    <button onclick="event.stopPropagation();saveWaypointInlineEditor(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:#4cc9f0;color:#111;border:none;border-radius:3px;cursor:pointer;">Save</button>
+                                    <button onclick="event.stopPropagation();cancelWaypointInlineEditor(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:var(--secondary-bg);color:var(--secondary-fg);border:1px solid var(--border);border-radius:3px;cursor:pointer;">Cancel</button>
+                                    <button onclick="event.stopPropagation();saveWaypointInlineEditor(${wp.id})" style="padding:5px 12px;font-size:0.75em;background:var(--accent);color:var(--accent-contrast);border:1px solid var(--accent);border-radius:3px;cursor:pointer;">Save</button>
                                 </div>
                             </div>
                         </div>
@@ -2161,12 +2394,16 @@
         
         // Load waypoints on startup
         loadWaypointsFromStorage();
+        updateThemeToggleIcon();
         
         // Handle drawing events
         map.on(L.Draw.Event.CREATED, function(e) {
             try {
                 drawnItems.clearLayers();
                 previewLayer.clearLayers();
+                if (e.layer && typeof e.layer.setStyle === 'function') {
+                    e.layer.setStyle(selectionFinalStyle);
+                }
                 drawnItems.addLayer(e.layer);
                 selectedBounds = e.layer.getBounds();
                 // Reset preview button when new selection is drawn (cached data is stale)
@@ -2524,14 +2761,14 @@
                     if (dropped > 0) {
                         countText = `${data.count.toLocaleString()} <span style="color:#ff6b6b;font-size:0.85em;">(-${dropped.toLocaleString()})</span>`;
                     }
-                    breakdownHtml += `<div style="display:flex;justify-content:space-between;"><span>${typeName} <span style="color:#666;">(${countText})</span></span><span style="color:${color}">${kb} KB</span></div>`;
+                    breakdownHtml += `<div style="display:flex;justify-content:space-between;"><span>${typeName} <span style="color:var(--muted);">(${countText})</span></span><span style="color:${color}">${kb} KB</span></div>`;
                 }
                 
                 // Show types that were completely trimmed
                 if (stats.preTrimCounts) {
                     for (const [typeName, count] of Object.entries(stats.preTrimCounts)) {
                         if (!stats.typeBreakdown[typeName] && count > 0) {
-                            breakdownHtml += `<div style="display:flex;justify-content:space-between;color:#666;"><span>${typeName} <span style="color:#ff6b6b;">(0 <span style="font-size:0.85em;">-${count.toLocaleString()}</span>)</span></span><span>0 KB</span></div>`;
+                            breakdownHtml += `<div style="display:flex;justify-content:space-between;color:var(--muted);"><span>${typeName} <span style="color:#ff6b6b;">(0 <span style="font-size:0.85em;">-${count.toLocaleString()}</span>)</span></span><span>0 KB</span></div>`;
                         }
                     }
                 }
@@ -2539,11 +2776,11 @@
                 // Add spatial index or tile directory
                 if (stats.spatialIndexSize > 0) {
                     const idxKb = (stats.spatialIndexSize / 1024).toFixed(1);
-                    breakdownHtml += `<div style="display:flex;justify-content:space-between;margin-top:4px;border-top:1px solid #333;padding-top:4px;"><span style="color:#4cc9f0;">Spatial Index (${stats.gridSize}×${stats.gridSize})</span><span style="color:#4cc9f0;">${idxKb} KB</span></div>`;
+                    breakdownHtml += `<div style="display:flex;justify-content:space-between;margin-top:4px;border-top:1px solid var(--border);padding-top:4px;"><span style="color:var(--accent);">Spatial Index (${stats.gridSize}×${stats.gridSize})</span><span style="color:var(--accent);">${idxKb} KB</span></div>`;
                 } else if (stats.tileDirectorySize > 0) {
                     const dirKb = (stats.tileDirectorySize / 1024).toFixed(1);
                     const tgs = stats.tileGridSize || 0;
-                    breakdownHtml += `<div style="display:flex;justify-content:space-between;margin-top:4px;border-top:1px solid #333;padding-top:4px;"><span style="color:#4cc9f0;">Tile Directory (${tgs}×${tgs})</span><span style="color:#4cc9f0;">${dirKb} KB</span></div>`;
+                    breakdownHtml += `<div style="display:flex;justify-content:space-between;margin-top:4px;border-top:1px solid var(--border);padding-top:4px;"><span style="color:var(--accent);">Tile Directory (${tgs}×${tgs})</span><span style="color:var(--accent);">${dirKb} KB</span></div>`;
                 }
                 
                 // Add name table
@@ -3095,10 +3332,10 @@
                                 const nameKB = (nameBytes / 1024).toFixed(1);
                                 breakdownHtml += `<div style="display:flex;justify-content:space-between;padding-left:12px;"><span style="color:#b197fc;">+ names (${window.extractedMetadata.namedFeatures.buildings.length})</span><span style="color:#b197fc;">${nameKB} KB</span></div>`;
                             } else if (!window.previewData && !window.extractedMetadata) {
-                                breakdownHtml += '<div style="display:flex;justify-content:space-between;padding-left:12px;"><span style="color:#888;">+ names</span><span style="color:#888;">preview to see</span></div>';
+                                breakdownHtml += '<div style="display:flex;justify-content:space-between;padding-left:12px;"><span style="color:var(--muted);">+ names</span><span style="color:var(--muted);">preview to see</span></div>';
                             } else {
                                 // Preview loaded but no building names found
-                                breakdownHtml += `<div style="display:flex;justify-content:space-between;padding-left:12px;"><span style="color:#888;">+ names</span><span style="color:#888;">0 found</span></div>`;
+                                breakdownHtml += `<div style="display:flex;justify-content:space-between;padding-left:12px;"><span style="color:var(--muted);">+ names</span><span style="color:var(--muted);">0 found</span></div>`;
                             }
                         }
                     }
@@ -3207,7 +3444,7 @@
                             savingsEl.style.color = '#69db7c';
                         } else {
                             savingsEl.textContent = `save ${savingsKB} KB`;
-                            savingsEl.style.color = '#888';
+                            savingsEl.style.color = 'var(--muted)';
                         }
                     } else {
                         savingsEl.textContent = '';
@@ -4526,11 +4763,11 @@
                     if (items.length === 0) return;
                     html += `<div style="margin-bottom:8px;">`;
                     html += `<div style="color:${color};font-weight:bold;margin-bottom:4px;">${title} (${items.length})</div>`;
-                    html += `<div style="color:#aaa;padding-left:8px;">`;
+                    html += `<div style="color:var(--muted);padding-left:8px;">`;
                     const shown = items.slice(0, 10);
                     html += shown.map(f => `<div style="margin:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${f.label}">${f.label}</div>`).join('');
                     if (items.length > 10) {
-                        html += `<div style="color:#666;font-style:italic;">...and ${items.length - 10} more</div>`;
+                        html += `<div style="color:var(--muted);font-style:italic;">...and ${items.length - 10} more</div>`;
                     }
                     html += `</div></div>`;
                 };
@@ -4567,11 +4804,11 @@
                     return true;
                 });
                 
-                routesList.innerHTML = '<div style="color:#4cc9f0;margin-bottom:4px;">Detected Routes:</div>' +
+                routesList.innerHTML = '<div style="color:var(--accent);margin-bottom:4px;">Detected Routes:</div>' +
                     uniqueRoutes.map(r => 
                         `<div style="display:flex;align-items:center;gap:6px;margin:2px 0;">` +
                         `<span style="background:${r.colour};color:#fff;padding:1px 6px;border-radius:3px;font-weight:bold;min-width:24px;text-align:center;">${r.ref}</span>` +
-                        `<span style="color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.name}">${r.name}</span>` +
+                        `<span style="color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.name}">${r.name}</span>` +
                         `</div>`
                     ).join('');
                 routesList.style.display = 'block';
@@ -4594,9 +4831,9 @@
                     uniqueBusRoutes.slice(0, 15).map(r => 
                         `<div style="display:flex;align-items:center;gap:6px;margin:2px 0;">` +
                         `<span style="background:${r.colour};color:#000;padding:1px 6px;border-radius:3px;font-weight:bold;min-width:24px;text-align:center;">${r.ref}</span>` +
-                        `<span style="color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.name}">${r.name}</span>` +
+                        `<span style="color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.name}">${r.name}</span>` +
                         `</div>`
-                    ).join('') + (uniqueBusRoutes.length > 15 ? `<div style="color:#666;font-style:italic;">...and ${uniqueBusRoutes.length - 15} more</div>` : '');
+                    ).join('') + (uniqueBusRoutes.length > 15 ? `<div style="color:var(--muted);font-style:italic;">...and ${uniqueBusRoutes.length - 15} more</div>` : '');
                 busRoutesList.style.display = 'block';
             } else if (busRoutesList) {
                 busRoutesList.style.display = 'none';
@@ -9441,11 +9678,11 @@
                 
                 html += `<div style="margin-bottom:8px;">`;
                 html += `<div style="color:${color};font-weight:bold;margin-bottom:4px;">${title} (${items.length})</div>`;
-                html += `<div style="color:#aaa;padding-left:8px;">`;
+                html += `<div style="color:var(--muted);padding-left:8px;">`;
                 const shown = items.slice(0, 10);
                 html += shown.map(f => `<div style="margin:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${f.label}">${f.label}</div>`).join('');
                 if (items.length > 10) {
-                    html += `<div style="color:#666;font-style:italic;">...and ${items.length - 10} more</div>`;
+                    html += `<div style="color:var(--muted);font-style:italic;">...and ${items.length - 10} more</div>`;
                 }
                 html += `</div></div>`;
             };
@@ -9469,7 +9706,7 @@
                 addSection('Buildings', namedFeatures.buildings, '#b197fc');
             }
             
-            featuresList.innerHTML = html || '<div style="color:#666;font-style:italic;">No names match current settings</div>';
+            featuresList.innerHTML = html || '<div style="color:var(--muted);font-style:italic;">No names match current settings</div>';
             
             // Calculate building names separately
             let buildingCount = 0;
@@ -9513,15 +9750,15 @@
     
     <!-- Text Editor Modal -->
     <div id="textEditorModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;">
-        <div style="background:#1a1a2e;border-radius:8px;padding:20px;width:90%;max-width:400px;border:1px solid #333;">
+        <div style="background:var(--panel-bg);border-radius:8px;padding:20px;width:90%;max-width:400px;border:1px solid var(--border);color:var(--panel-fg);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <span id="textEditorTitle" style="font-weight:bold;color:#eee;">Edit</span>
-                <button onclick="closeTextEditor()" style="background:none;border:none;color:#888;font-size:1.2em;cursor:pointer;">&times;</button>
+                <span id="textEditorTitle" style="font-weight:bold;color:var(--panel-fg);">Edit</span>
+                <button onclick="closeTextEditor()" style="background:none;border:none;color:var(--muted);font-size:1.2em;cursor:pointer;">&times;</button>
             </div>
-            <textarea id="textEditorArea" style="width:100%;height:120px;background:#16213e;border:1px solid #333;border-radius:4px;color:#eee;padding:8px;font-family:inherit;font-size:0.9em;resize:vertical;"></textarea>
+            <textarea id="textEditorArea" style="width:100%;height:120px;background:var(--field-bg);border:1px solid var(--field-border);border-radius:4px;color:var(--field-fg);padding:8px;font-family:inherit;font-size:0.9em;resize:vertical;"></textarea>
             <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
-                <button onclick="closeTextEditor()" style="padding:6px 16px;background:#333;color:#aaa;border:none;border-radius:4px;cursor:pointer;">Cancel</button>
-                <button onclick="saveTextEditor()" style="padding:6px 16px;background:#4cc9f0;color:#000;border:none;border-radius:4px;cursor:pointer;font-weight:bold;">Save</button>
+                <button onclick="closeTextEditor()" style="padding:6px 16px;background:var(--secondary-bg);color:var(--secondary-fg);border:1px solid var(--border);border-radius:4px;cursor:pointer;">Cancel</button>
+                <button onclick="saveTextEditor()" style="padding:6px 16px;background:var(--accent);color:var(--accent-contrast);border:1px solid var(--accent);border-radius:4px;cursor:pointer;font-weight:bold;">Save</button>
             </div>
         </div>
     </div>
