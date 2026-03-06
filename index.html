@@ -862,7 +862,7 @@
         }
 
         .leaflet-draw-guide-dash {
-            background-color: var(--selection-preview) !important;
+            display: none !important;
         }
 
         .leaflet-draw-tooltip {
@@ -8744,16 +8744,6 @@
                             lat: haloMinLat + (qp.qLat / qMax) * latRange,
                             lon: haloMinLon + (qp.qLon / qMax) * lonRange
                         }));
-
-                        // Deduplicate: only keep this feature if its centroid lies within
-                        // the tile's core bounds (not the halo). Each feature is stored in
-                        // every tile its halo overlaps, so without this check the same road
-                        // segment gets drawn multiple times with different halo-clipped
-                        // endpoints, producing visible straight lines at tile boundaries.
-                        const centroidLat = points.reduce((s, p) => s + p.lat, 0) / points.length;
-                        const centroidLon = points.reduce((s, p) => s + p.lon, 0) / points.length;
-                        if (centroidLat < tileMinLat || centroidLat > tileMaxLat ||
-                            centroidLon < tileMinLon || centroidLon > tileMaxLon) continue;
 
                         features.push({
                             type,
