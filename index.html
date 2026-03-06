@@ -204,6 +204,14 @@
             box-shadow: 0 8px 32px rgba(0,0,0,.12);
         }
 
+        .leaflet-container {
+            background: #e5e3df;
+        }
+
+        .leaflet-tile {
+            outline: 1px solid transparent;
+        }
+
         
         .sidebar {
             background: var(--card-bg);
@@ -1707,7 +1715,11 @@
         // MAP INITIALIZATION
         // =============================================================================
         
-        const map = L.map('map').setView([40.7128, -74.0060], 13);
+        const map = L.map('map', {
+            zoomAnimation: false,
+            fadeAnimation: false,
+            markerZoomAnimation: false
+        }).setView([40.7128, -74.0060], 13);
         const selectionPreviewStyle = {
             color: '#ffffff',
             weight: 4,
@@ -1727,7 +1739,11 @@
         
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
-            maxZoom: 30
+            maxZoom: 30,
+            maxNativeZoom: 19,
+            updateWhenZooming: false,
+            updateWhenIdle: true,
+            keepBuffer: 4
         }).addTo(map);
         
         // Drawing layer
