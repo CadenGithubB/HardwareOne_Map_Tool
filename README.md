@@ -13,7 +13,7 @@ A web-based tool to create offline map files (`.hwmap`) for ESP32 devices runnin
 
 ## Usage
 
-### Online (GitHub Pages)
+### You can use this tool by visiting the Github Pages link:
 Visit: [Github Pages Link](https://cadengithubb.github.io/HardwareOne_Map_Tool/)
 
 ### How to run this Locally
