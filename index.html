@@ -1715,6 +1715,10 @@
         // MAP INITIALIZATION
         // =============================================================================
         
+        if (window.L && L.Browser) {
+            L.Browser.any3d = false;
+        }
+
         const map = L.map('map', {
             zoomAnimation: false,
             fadeAnimation: false,
@@ -1741,6 +1745,7 @@
             attribution: '© OpenStreetMap contributors',
             maxZoom: 30,
             maxNativeZoom: 19,
+            noWrap: true,
             updateWhenZooming: false,
             updateWhenIdle: true,
             keepBuffer: 4
