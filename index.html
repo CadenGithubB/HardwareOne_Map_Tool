@@ -1130,7 +1130,7 @@
                             Rivers <span class="feature-size" id="size-waterways"></span>
                         </label>
                         <label class="checkbox-item">
-                            <input type="checkbox" id="coastlines" onchange="updateSectionCounts(); updateCoastlineSubOptions();">
+                            <input type="checkbox" id="coastlines" checked onchange="updateSectionCounts(); updateCoastlineSubOptions();">
                             Coastlines <span class="feature-size" id="size-coastlines"></span>
                         </label>
                         <div id="coastlineSubOptions" style="grid-column: span 2; display: flex; flex-direction: column; gap: 4px; padding-left: 16px; margin: 4px 0;">
@@ -2252,7 +2252,7 @@
                 
                 const notesHtml = wp.notes ? `<div style="margin-top:4px;padding:4px;background:var(--panel-bg);border:1px solid var(--border);border-radius:3px;font-size:0.85em;color:var(--muted);max-width:200px;word-wrap:break-word;white-space:pre-wrap;">${safeNotes}</div>` : '';
                 const filesCount = (wp.files || []).length;
-                const filesHtml = filesCount > 0 ? `<div style="margin-top:4px;font-size:0.8em;color:var(--muted);">📎 ${filesCount} file${filesCount > 1 ? 's' : ''} attached</div>` : '';
+                const filesHtml = filesCount > 0 ? `<div style="margin-top:4px;font-size:0.8em;color:var(--muted);">${filesCount} file${filesCount > 1 ? 's' : ''} attached</div>` : '';
                 marker.bindPopup(`
                     <div style="font-family:system-ui,sans-serif;">
                         <strong>${safeName}</strong><br>
@@ -2289,14 +2289,14 @@
                 const safeName = escapeHtml(wp.name);
                 const filesCount = (wp.files || []).length;
                 const badges = [];
-                if (wp.notes) badges.push('📝');
-                if (filesCount > 0) badges.push(`📎${filesCount}`);
+                if (wp.notes) badges.push('notes');
+                if (filesCount > 0) badges.push(`${filesCount} file${filesCount > 1 ? 's' : ''}`);
                 const badgeHtml = badges.length > 0 ? `<span style="color:var(--muted);font-size:0.8em;margin-left:6px;">${badges.join(' ')}</span>` : '';
                 
                 html += `
                     <div id="waypoint-card-${wp.id}" style="background:var(--panel-bg);border:1px solid var(--border);border-radius:4px;margin-bottom:4px;overflow:hidden;">
                         <div style="display:flex;align-items:center;padding:8px 10px;cursor:pointer;" onclick="toggleWaypointExpand(${wp.id})">
-                            <span style="color:var(--accent);margin-right:8px;">📍</span>
+                            <span style="color:var(--accent);margin-right:8px;display:inline-flex;align-items:center;" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></span>
                             <span style="flex:1;color:var(--panel-fg);font-size:0.85em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${safeName}</span>
                             ${badgeHtml}
                             <span id="waypoint-arrow-${wp.id}" style="color:var(--muted);font-size:0.7em;margin-left:8px;">▶</span>
@@ -2431,7 +2431,7 @@
                 // Reset preview button when new selection is drawn (cached data is stale)
                 const previewBtn = document.getElementById('previewBtn');
                 if (previewBtn) {
-                    previewBtn.textContent = '👁️ Preview Selection';
+                    previewBtn.textContent = 'Preview Selection';
                     previewBtn.onclick = previewMap;
                 }
                 window.hwmapBlob = null;
@@ -2766,7 +2766,7 @@
                 const trimmed = stats.totalBeforeTrim - stats.featureCount;
                 if (trimmed > 0) {
                     const pct = Math.round((trimmed / stats.totalBeforeTrim) * 100);
-                    breakdownHtml += `<div style="color:#ff6b6b;margin-bottom:8px;padding:4px 6px;background:rgba(255,107,107,0.15);border-radius:3px;font-size:0.9em;">⚠️ ${trimmed.toLocaleString()} features trimmed (${pct}% dropped due to limit)</div>`;
+                    breakdownHtml += `<div style="color:#ff6b6b;margin-bottom:8px;padding:4px 6px;background:rgba(255,107,107,0.15);border-radius:3px;font-size:0.9em;">Warning: ${trimmed.toLocaleString()} features trimmed (${pct}% dropped due to limit)</div>`;
                 }
             }
             
@@ -2824,7 +2824,7 @@
             // Reset preview button to preview mode and clear cached blob
             const previewBtn = document.getElementById('previewBtn');
             if (previewBtn) {
-                previewBtn.textContent = '👁️ Preview Selection';
+                previewBtn.textContent = 'Preview Selection';
                 previewBtn.onclick = previewMap;
             }
             window.hwmapBlob = null;
@@ -3603,7 +3603,7 @@
             // Reset preview button back to preview mode
             const btn = document.getElementById('previewBtn');
             if (btn) {
-                btn.textContent = '👁️ Preview Selection';
+                btn.textContent = 'Preview Selection';
                 btn.onclick = previewMap;
             }
             // Clear cached blob since user closed preview
@@ -4875,7 +4875,7 @@
             
             const btn = document.getElementById('previewBtn');
             btn.disabled = true;
-            btn.textContent = '⏳ Loading...';
+            btn.textContent = 'Loading...';
             setStatus('working', 'Fetching preview from OpenStreetMap...');
             
             try {
@@ -5303,7 +5303,7 @@
                     
                     // Enable download - change button to show both options
                     btn.disabled = false;
-                    btn.textContent = '⬇️ Download Map';
+                    btn.textContent = 'Download Map';
                     btn.onclick = downloadPreviewedMap;
                 });
                 
@@ -5311,7 +5311,7 @@
                 setStatus('error', 'Preview error: ' + error.message);
                 console.error(error);
                 btn.disabled = false;
-                btn.textContent = '👁️ Preview Selection';
+                btn.textContent = 'Preview Selection';
             }
         }
         
