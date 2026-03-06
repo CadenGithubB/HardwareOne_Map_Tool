@@ -212,6 +212,42 @@
             outline: 1px solid transparent;
         }
 
+        .leaflet-bar a,
+        .leaflet-bar a:hover,
+        .leaflet-control-zoom-in,
+        .leaflet-control-zoom-out {
+            background-color: var(--map-control-bg) !important;
+            color: var(--map-control-fg) !important;
+            border-bottom-color: var(--map-control-border) !important;
+        }
+
+        .leaflet-bar,
+        .leaflet-draw-toolbar,
+        .leaflet-draw-actions {
+            box-shadow: 0 2px 10px rgba(0,0,0,.22) !important;
+        }
+
+        .leaflet-bar a:hover,
+        .leaflet-draw-toolbar a:hover,
+        .leaflet-draw-actions a:hover {
+            background-color: var(--secondary-hover) !important;
+        }
+
+        html[data-theme="dark"] .leaflet-bar a,
+        html[data-theme="dark"] .leaflet-bar a:hover {
+            color: var(--map-control-fg) !important;
+            text-shadow: none !important;
+        }
+
+        html[data-theme="dark"] .leaflet-draw-toolbar a {
+            filter: brightness(1.45) contrast(0.9) !important;
+        }
+
+        html[data-theme="dark"] .leaflet-draw-toolbar a.leaflet-draw-toolbar-button-enabled,
+        html[data-theme="dark"] .leaflet-draw-toolbar a:hover {
+            filter: brightness(1.7) contrast(0.95) !important;
+        }
+
         
         .sidebar {
             background: var(--card-bg);
@@ -867,6 +903,7 @@
         .leaflet-draw-toolbar a.leaflet-draw-toolbar-button-enabled {
             background-color: var(--accent) !important;
             color: var(--accent-contrast) !important;
+            border-color: var(--accent) !important;
         }
 
         .leaflet-draw-guide-dash {
@@ -921,7 +958,7 @@
             left: 50%;
             width: 18px;
             height: 3px;
-            background: #464646;
+            background: var(--map-control-fg);
             border-radius: 1px;
             transform: translate(-50%, -50%) rotate(-45deg);
         }
